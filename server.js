@@ -3,6 +3,7 @@ const client = require('socket.io').listen(4000).sockets;
 const express = require('express');
 const app = express();
 var https = require('https');
+var fs = require('fs');
 
 app.use(express.static('./static'));
 
