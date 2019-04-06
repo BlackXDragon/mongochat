@@ -37,6 +37,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 
     <script>
+        var notifs = false;
+        if(!window.Notification) {}
+        else {
+            Notification.requestPermission((result) => {
+                if(result == 'denied') {
+                    if(confirm('Are you sure you don\'t want to recieve notifications for messages?')) {
+                        notifs = false;
+                    } else {
+                        alert('Please enable notifications for this site from settings.');
+                    }
+                } else {
+                    notifs = true;
+                }
+            });
+        }
         (function(){
             var element = function(id){
                 return document.getElementById(id);
@@ -81,9 +96,16 @@
                             message.textContent = data[x].name+": "+data[x].message;
                             messages.appendChild(message);
                             messages.insertBefore(message, messages.firstChild);
-			}
-			var audio = new Audio('jingle-all-the-way.wav');
-			audio.play();
+                        }
+                        var audio = new Audio('jingle-all-the-way.wav');
+                        audio.play();
+                        if(notifs) {
+                            var idx = data.length - 1;
+                            var notif = new Notification(data[idx].name, {
+                                body: data[idx].message,
+                                icon: 'msg.png'
+                            });
+                        }
                     }
                 });
 
