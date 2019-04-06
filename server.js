@@ -2,8 +2,18 @@ const mongo = require('mongodb').MongoClient;
 const client = require('socket.io').listen(4000).sockets;
 const express = require('express');
 const app = express();
+var https = require('https');
 
 app.use(express.static('./static'));
+
+var options = {
+	key: fs.readFileSync(__dirname+'/private.key'),
+	cert: fs.readFileSync(__dirname+'/certificate.crt')
+};
+
+var secureServer = https.createServer(options, app);
+
+secureServer.listen(443);
 
 app.listen(80);
 
