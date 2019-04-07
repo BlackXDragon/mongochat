@@ -143,7 +143,9 @@
 
                 // Handle Chat Clear
                 clearBtn.addEventListener('click', function(){
-                    socket.emit('clear');
+                    if(confirm('Are you sure you want to clear the messages?')) {
+                        socket.emit('clear');
+                    }
                 });
 
                 // Clear Message
