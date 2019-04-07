@@ -23,7 +23,7 @@
                     <input type="text" id="username" class="form-control" placeholder="Enter name...">
                     <br>
                     <div class="card">
-                        <div id="messages" class="card-block">
+                        <div id="messages" class="card-block" style="overflow:scroll">
 
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                             // Build out message div
                             var message = document.createElement('div');
                             message.setAttribute('class', 'chat-message');
-                            message.textContent = data[x].name+": "+data[x].message;
+                            message.innerHTML = data[x].name+": "+data[x].message+"<div align=right><font size=2>"+new Date(data[x].dt).toLocaleString('en-IN')+"</font></div>";
                             messages.appendChild(message);
                             messages.insertBefore(message, messages.firstChild);
                         }
@@ -103,7 +103,8 @@
                             var idx = data.length - 1;
                             var notif = new Notification(data[idx].name, {
                                 body: data[idx].message,
-                                icon: 'msg.png'
+                                icon: 'msg.png',
+                                timestamp: data[idx].dt
                             });
                         }
                     }

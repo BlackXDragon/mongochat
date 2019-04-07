@@ -56,7 +56,8 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function(err, db){
                 sendStatus('Please enter a name and message');
             } else {
                 // Insert message
-                chat.insert({name: name, message: message}, function(){
+                data.dt = new Date();
+                chat.insert({name: name, message: message, dt: data.dt}, function(){
                     client.emit('output', [data]);
 
                     // Send status object
