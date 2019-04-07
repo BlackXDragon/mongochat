@@ -93,12 +93,12 @@
                             // Build out message div
                             var message = document.createElement('div');
                             message.setAttribute('class', 'chat-message');
-                            message.innerHTML = data[x].name+": "+data[x].message+"<div align=right><font size=2>"+new Date(data[x].dt).toLocaleString('en-IN')+"</font></div>";
+                            message.innerHTML = data[x].name+": "+data[x].message.replace('\n', '<br>')+"<div align=right><font size=2>"+new Date(data[x].dt).toLocaleString('en-IN')+"</font></div>";
                             messages.appendChild(message);
                             messages.insertBefore(message, messages.firstChild);
                         }
                         var idx = data.length - 1;
-                        console.log(username.value);
+                        console.log(data[idx].message);
                         if(data[idx].name != username.value && username.value != '') {
                             var audio = new Audio('jingle-all-the-way.wav');
                             audio.play();
