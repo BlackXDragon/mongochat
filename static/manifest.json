@@ -1,0 +1,16 @@
+{
+    "name": "Private Chat",
+    "short_name": "Messages",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "theme_color": "#0088DD",
+    "background_color": "#0088DD",
+    "icons": [
+        {
+            "src": "msg.png",
+            "sizes": "720x720",
+            "type": "image/png"
+        }
+    ]
+}
