@@ -97,15 +97,20 @@
                             messages.appendChild(message);
                             messages.insertBefore(message, messages.firstChild);
                         }
-                        var audio = new Audio('jingle-all-the-way.wav');
-                        audio.play();
-                        if(notifs) {
-                            var idx = data.length - 1;
-                            var notif = new Notification(data[idx].name, {
-                                body: data[idx].message,
-                                icon: 'msg.png',
-                                timestamp: data[idx].dt
-                            });
+                        var idx = data.length - 1;
+                        console.log(username.value);
+                        if(data[idx].name != username.value && username.value != '') {
+                            var audio = new Audio('jingle-all-the-way.wav');
+                            audio.play();
+                            if(notifs) {
+                                var notif = new Notification(data[idx].name, {
+                                    body: data[idx].message,
+                                    icon: 'msg.png',
+                                    timestamp: data[idx].dt,
+                                    silent: true
+                                });
+                                setTimeout(() => {notif.close()}, 8000);
+                            }
                         }
                     }
                 });
