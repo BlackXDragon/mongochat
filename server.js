@@ -18,14 +18,14 @@ webpush.setVapidDetails('mailto:malolan98@gmail.com', config.publicVapidKey, con
 app.get('/.well-known/acme-challenge/3tgO1WLhrgOICpIfOS1W9domFNkQsaGTZYFJJ9sbGv4', function(req, res) {
 	res.statusCode = 200;
 	res.setHeader('Content-Type', 'text/plain');
-	fs.readFile(__dirname+"/public/.well-known/acme-challenge/3tgO1WLhrgOICpIfOS1W9domFNkQsaGTZYFJJ9sbGv4", (err, data) => {
+	fs.readFile(__dirname+"/static/.well-known/acme-challenge/3tgO1WLhrgOICpIfOS1W9domFNkQsaGTZYFJJ9sbGv4", (err, data) => {
 		res.end(data);
 	});
 });
 app.get('/.well-known/acme-challenge/N_ywQDCSJPjxoLh0jnGI0MPf-j4KSC3LdXHXL1fgfgY', function(req, res) {
 	res.statusCode = 200;
 	res.setHeader('Content-Type', 'text/plain');
-	fs.readFile(__dirname+"/public/.well-known/acme-challenge/N_ywQDCSJPjxoLh0jnGI0MPf-j4KSC3LdXHXL1fgfgY", (err, data) => {
+	fs.readFile(__dirname+"/static/.well-known/acme-challenge/N_ywQDCSJPjxoLh0jnGI0MPf-j4KSC3LdXHXL1fgfgY", (err, data) => {
 		res.end(data);
 	});
 });
