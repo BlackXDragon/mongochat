@@ -15,6 +15,21 @@ var subs = [];
 
 webpush.setVapidDetails('mailto:malolan98@gmail.com', config.publicVapidKey, config.privateVapidKey);
 
+app.get('/.well-known/acme-challenge/LWiYiQ-7WXs9OJlNSSfT1ysQe-aOmO42zYEqgbzxMtc', function(req, res) {
+	res.statusCode = 200;
+	res.setHeader('Content-Type', 'text/plain');
+	fs.readFile(__dirname+"/public/.well-known/acme-challenge/LWiYiQ-7WXs9OJlNSSfT1ysQe-aOmO42zYEqgbzxMtc", (err, data) => {
+		res.end(data);
+	});
+});
+app.get('/.well-known/acme-challenge/N_ywQDCSJPjxoLh0jnGI0MPf-j4KSC3LdXHXL1fgfgY', function(req, res) {
+	res.statusCode = 200;
+	res.setHeader('Content-Type', 'text/plain');
+	fs.readFile(__dirname+"/public/.well-known/acme-challenge/N_ywQDCSJPjxoLh0jnGI0MPf-j4KSC3LdXHXL1fgfgY", (err, data) => {
+		res.end(data);
+	});
+});
+
 app.use('/push', (req, res) => {
 	subs.push(req.body);
 	res.status(201).json({});
