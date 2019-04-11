@@ -15,10 +15,10 @@ var subs = [];
 
 webpush.setVapidDetails('mailto:malolan98@gmail.com', config.publicVapidKey, config.privateVapidKey);
 
-app.get('/.well-known/acme-challenge/LWiYiQ-7WXs9OJlNSSfT1ysQe-aOmO42zYEqgbzxMtc', function(req, res) {
+app.get('/.well-known/acme-challenge/3tgO1WLhrgOICpIfOS1W9domFNkQsaGTZYFJJ9sbGv4', function(req, res) {
 	res.statusCode = 200;
 	res.setHeader('Content-Type', 'text/plain');
-	fs.readFile(__dirname+"/public/.well-known/acme-challenge/LWiYiQ-7WXs9OJlNSSfT1ysQe-aOmO42zYEqgbzxMtc", (err, data) => {
+	fs.readFile(__dirname+"/public/.well-known/acme-challenge/3tgO1WLhrgOICpIfOS1W9domFNkQsaGTZYFJJ9sbGv4", (err, data) => {
 		res.end(data);
 	});
 });
