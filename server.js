@@ -2,10 +2,25 @@ const mongo = require('mongodb').MongoClient;
 const client = require('socket.io').listen(4000).sockets;
 const express = require('express');
 const app = express();
-var https = require('https');
-var fs = require('fs');
+const https = require('https');
+const fs = require('fs');
+const webpush = require('web-push');
+const bodyParser = require('body-parser');
+const config = require('./config');
 
 app.use(express.static('./static'));
+app.use(bodyParser.json());
+
+var subs = [];
+
+webpush.setVapidDetails('mailto:malolan98@gmail.com', config.publicVapidKey, config.privateVapidKey);
+
+app.use('/push', (req, res) => {
+	subs.push(req.body);
+	res.status(201).json({});
+	webpush.sendNotification(req.body.subscription, JSON.stringify({name: 'Meaw Meaw', message: 'Web Push registered!'}))
+	.catch(err => console.error(err));
+});
 
 var options = {
 	key: fs.readFileSync(__dirname+'/private.key'),
@@ -58,6 +73,16 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function(err, db){
                 // Insert message
                 data.dt = new Date();
                 chat.insert({name: name, message: message, dt: data.dt}, function(){
+					const pushPayload = JSON.stringify(data);
+
+					subs.forEach((sub) => {
+						console.log(sub);
+						if(sub.uname != data.name) {
+							webpush.sendNotification(sub.subscription, pushPayload)
+							.catch((err) => console.error(err));
+						}
+					});
+
                     client.emit('output', [data]);
 
                     // Send status object

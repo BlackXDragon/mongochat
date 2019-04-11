@@ -1,4 +1,15 @@
-console.log('Hello');
+console.log('Service Worker Running');
+
+self.addEventListener('push', e => {
+    console.log('Got Push Notification');
+    const data = e.data.json();
+    console.log(data);
+    self.registration.showNotification(data.name, {
+        body: data.message,
+        icon: '/msg.png'
+    });
+})
+
 self.addEventListener('install', event => {
     self.skipWaiting();
 });
