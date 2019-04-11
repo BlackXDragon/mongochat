@@ -1,5 +1,4 @@
 const mongo = require('mongodb').MongoClient;
-const client = require('socket.io').listen(4000).sockets;
 const express = require('express');
 const app = express();
 const https = require('https');
@@ -43,6 +42,8 @@ var options = {
 };
 
 var secureServer = https.createServer(options, app);
+
+const client = require('socket.io')(secureServer).sockets;
 
 secureServer.listen(443);
 

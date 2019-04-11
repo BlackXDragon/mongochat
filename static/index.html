@@ -87,7 +87,7 @@
             }
 
             // Connect to socket.io
-            var socket = io.connect('http://'+document.location.hostname+':4000');
+            var socket = io.connect('https://'+document.location.hostname, {secure: true, rejectUnauthorized: false});
 
             // Check for connection
             if(socket !== undefined){
