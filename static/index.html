@@ -211,6 +211,14 @@
                     if(!response.ok) {
                         console.log(response.statusText);
                     }
+                    if(window.navigator && navigator.serviceWorker) {
+                        navigator.serviceWorker.getRegistrations()
+                        .then(function(registrations) {
+                            for(let registration of registrations) {
+                            registration.unregister();
+                            }
+                        });
+                    }
                     window.location.pathname = '/login';
                     return response;
                 })
