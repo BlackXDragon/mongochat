@@ -60,6 +60,9 @@ app.post('/login', (req, res) => {
     db = app.get('db');
     db.collection('users').findOne({user: req.body.uname})
     .then((users) => {
+        if(!users) {
+            return res.status(400).json({success: false});
+        }
         if(users.password == req.body.password) {
             res.statusCode = 200;
             res.cookie('user', req.body.uname, {signed: true, maxAge: 864000});
