@@ -36,6 +36,11 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
+    for(sub in subs) {
+        if(sub.uname == req.signedCookies.user) {
+            subs.splice(subs.indexOf(sub), 1);
+        }
+    }
     res.status(200).clearCookie('user').json({});
 });
 
