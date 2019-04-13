@@ -221,13 +221,13 @@
             socket.on('cleared', function () {
                 messages.textContent = '';
             });
-        }
 
-        if (navigator.serviceWorker) {
-            if ('PushManager' in window) {
-                send().catch(err => console.error(err));
-            } else {
-                console.log('Push not available');
+            if (navigator.serviceWorker) {
+                if ('PushManager' in window) {
+                    send().catch(err => console.error(err));
+                } else {
+                    console.log('Push not available');
+                }
             }
         }
 
