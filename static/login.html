@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0088DD">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+    <title>Page Not Found</title>
+</head>
+<body style="background-color: #0088DD; top: 0; bottom: 0; left: 0; right: 0;">
+    <div class='container'>
+        <div class='row'>
+            <div class='text-center col-md-6 offset-md-3 col-sm-12' id='login-area'>
+                <div class='spacer-sm'></div>
+                <div class='page-header text-center cursive-font'>
+                    <h2>Login to MeawMeaw</h2>
+                </div>
+                <div class='spacer-sm'></div>
+                <div class='card-block text-center cursive-font' id='result' style='visibility: hidden;'>
+                    Logged in successfully!
+                </div>
+                <div class='spacer' id="spac"></div>
+                <input type="text" id="username" class="form-control" placeholder="Username">
+                <div class='spacer-sm'></div>
+                <input type="password" id="password" class="form-control" placeholder="Password">
+                <div class='spacer-sm'></div>
+                <button type='submit' class='btn login cursive-font' id='login'>Log in!</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    var loginBtn = document.getElementById('login');
+    var username = document.getElementById('username');
+    var password = document.getElementById('password');
+    var result = document.getElementById('result');
+    var spac = document.getElementById('spac');
+
+    loginBtn.addEventListener('click', e => {
+        login();
+    });
+
+    username.addEventListener('keydown', e => {
+        if(e.which == 13) {
+            if(password.value == '') {
+                result.innerHTML = 'Please enter the password.';
+                result.style.visibility = 'visible';
+                password.focus();
+            } else {
+                login();
+            }
+        }
+    });
+
+    password.addEventListener('keydown', e => {
+        if(e.which == 13) {
+            if(username.value == '') {
+                result.innerHTML = 'Please enter the username.';
+                result.style.visibility = 'visible';
+                username.focus();
+            } else {
+                login();
+            }
+        }
+    });
+
+    var login = () => {
+        fetch('/login', {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({uname: username.value, password: password.value})
+        })
+        .then((data) => {
+            if(!data.ok) {
+                if(data.status == 404) {
+                    result.innerHTML = 'The server seems to be down. Sorry for the inconvenience.';
+                    spac.className = 'spacer-sm'
+                    result.style.visibility = 'visible';
+                    throw Error('404')
+                }
+            }
+            return data;
+        })
+        .then((data) => {return data.json()})
+        .then(data => {
+            if(data.success) {
+                result.style.visibility = 'visible';
+                setTimeout(() => {window.location.pathname = '/'}, 500);
+            } else {
+                result.innerHTML = 'Login failed. Please check your credentials and retry.';
+                spac.className = 'spacer-sm';
+                result.style.visibility = 'true';
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+    }
+</script>
+<style>
+.card-block{
+    background-color: #0055AA;
+    color: #FFFFFF;
+}
+.login{
+    background-color: #0055AA;
+    color: #FFFFFF;
+    border-color: #AAFFFF;
+    border-width: 1pt;
+}
+.spacer{
+    height: 48pt;
+}
+.spacer-sm{
+    height: 30pt;
+}
+.cursive-font{
+    font-family: 'Pacifico', cursive;
+}
+h2{
+    color: #FFFFFF;
+}
+</style>
+</html>

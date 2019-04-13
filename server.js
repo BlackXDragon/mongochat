@@ -5,10 +5,12 @@ const https = require('https');
 const fs = require('fs');
 const webpush = require('web-push');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const config = require('./config');
 
 app.use(express.static('./static'));
 app.use(bodyParser.json());
+app.use(cookieParser(config.cookieSecret));
 
 var subs = [];
 
@@ -29,11 +31,48 @@ app.get('/.well-known/acme-challenge/N_ywQDCSJPjxoLh0jnGI0MPf-j4KSC3LdXHXL1fgfgY
 	});
 });
 
+app.get('/login', (req, res) => {
+    res.sendFile(__dirname+'/static/login.html');
+});
+
+app.get('/logout', (req, res) => {
+    res.status(200).clearCookie('user').json({});
+});
+
 app.use('/push', (req, res) => {
-	subs.push(req.body);
-	res.status(201).json({});
-	webpush.sendNotification(req.body.subscription, JSON.stringify({name: 'Meaw Meaw', message: 'Web Push registered!'}))
-	.catch(err => console.error(err));
+    var exists = false;
+    for(sub in subs) {
+        if(sub.keys == req.body.keys) {
+            exists = true;
+        }
+    }
+    if(exists) {
+        res.status(400).json({});
+    } else {
+        subs.push(req.body);
+        res.status(201).json({});
+        webpush.sendNotification(req.body.subscription, JSON.stringify({name: 'Meaw Meaw', message: 'Web Push registered!'}))
+        .catch(err => console.error(err));
+    }
+});
+
+app.post('/login', (req, res) => {
+    db = app.get('db');
+    db.collection('users').findOne({user: req.body.uname})
+    .then((users) => {
+        if(users.password == req.body.password) {
+            res.statusCode = 200;
+            res.cookie('user', req.body.uname, {signed: true, maxAge: 864000});
+            res.json({success: true});
+        }
+    });
+});
+
+app.get('/un', (req, res) => {
+    if(!req.signedCookies.user) {
+        return res.status(403).json({success: false, msg: 'Please login first'});
+    }
+    res.status(200).json({success: true, user: req.signedCookies.user});
 });
 
 var options = {
@@ -56,6 +95,8 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function(err, db){
     }
 
     console.log('MongoDB connected...');
+
+    app.set('db', db);
 
     // Connect to Socket.io
     client.on('connection', function(socket){

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,33 +8,39 @@
     <link rel="manifest" href="manifest.json">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
     <title>Page Not Found</title>
     <style>
-        #messages{height:300px;}
+        #messages {
+            height: 300px;
+            font-family: 'Pacifico', cursive;
+        }
+        .cursive-font{
+            font-family: 'Pacifico', cursive;
+        }
     </style>
 </head>
+
 <body style="background-color: #0088DD; top: 0; bottom: 0; left: 0; right: 0;">
     <div class="container">
         <div class="row">
             <div class="col-md-6 offset-md-3 col-sm-12">
-                <h1 class="text-center">
-                    Private Chat 
-                    <button id="clear" class="btn btn-danger">Clear</button>
-				</h1>
-            	<div class="justify-content-center d-flex">
-					<button id="push" class="btn">Enable notifications</button>
-            	</div>
-                <div id="status"></div>
+                <h1 class="text-center cursive-font">
+                    Private Chat
+                    <button id="logout" class="btn btn-danger">Log out</button>
+                </h1>
+                <div id="status" class='cursive-font'></div>
                 <div id="chat">
-                    <input type="text" id="username" class="form-control" placeholder="Enter name...">
-                    <br>
                     <div class="card">
                         <div id="messages" class="card-block" style="overflow:scroll">
 
                         </div>
                     </div>
                     <br>
-                    <textarea id="textarea" class="form-control" placeholder="Enter message..."></textarea>
+                    <div class="row">
+                        <textarea id="textarea" class="form-control col-md-9 col-sm-9" placeholder="Enter message..."></textarea>
+                        <button id="clear" class="btn btn-danger col-md-3 col-sm-3">Clear</button>
+                    </div>
                 </div>
                 <div id='sound'></div>
             </div>
@@ -59,55 +66,92 @@
                 }
             });
         }*/
-        (function(){
-            var element = function(id){
-                return document.getElementById(id);
+        var element = function (id) {
+            return document.getElementById(id);
+        }
+
+        // Get Elements
+        var status = element('status');
+        var messages = element('messages');
+        var textarea = element('textarea');
+        var clearBtn = element('clear');
+        var pushBtn = element('push');
+        var logout = element('logout');
+        var username = {}
+
+        fetch('/un', {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin'
+        })
+        .then((response) => {
+            console.log(response);
+            if(!response.ok) {
+                status.innerHTML = 'Not logged in. Please login at /login.';
+                setTimeout(() => {return window.location.pathname = '/login';}, 500);
             }
-
-            // Get Elements
-            var status = element('status');
-            var messages = element('messages');
-            var textarea = element('textarea');
-            var username = element('username');
-			var clearBtn = element('clear');
-			var pushBtn = element('push');
-
-            // Set default status
-            var statusDefault = status.textContent;
-
-            var setStatus = function(s){
-                // Set status
-                status.textContent = s;
-
-                if(s !== statusDefault){
-                    var delay = setTimeout(function(){
-                        setStatus(statusDefault);
-                    }, 4000);
-                }
+            return response;
+        })
+        .then(data => {return data.json()})
+        .then((data) => {
+            console.log(data);
+            if(!data.success) {
+                status.textContent = data.msg;
+                setTimeout(() => {return window.location.pathname = '/login';}, 500);
+            } else {
+                status.textContent = 'Logged in as '+data.user+'.';
+                connect();
+                username.value = data.user;
             }
+            setTimeout(() => {status.innerHTML = ''}, 4000);
+        })
+        .catch(err => {
+            console.error(err);
+        });
 
+        // Set default status
+        var statusDefault = status.textContent;
+
+        var setStatus = function (s) {
+            // Set status
+            status.textContent = s;
+
+            if (s !== statusDefault) {
+                var delay = setTimeout(function () {
+                    setStatus(statusDefault);
+                }, 4000);
+            }
+        }
+
+        function connect() {
             // Connect to socket.io
-            var socket = io.connect('https://'+document.location.hostname, {secure: true, rejectUnauthorized: false});
+            var socket = io.connect('https://' + document.location.hostname, {
+                secure: true,
+                rejectUnauthorized: false
+            });
 
             // Check for connection
-            if(socket !== undefined){
+            if (socket !== undefined) {
                 console.log('Connected to socket...');
 
                 // Handle Output
-                socket.on('output', function(data){
+                socket.on('output', function (data) {
                     //console.log(data);
-                    if(data.length){
-                        for(var x = 0;x < data.length;x++){
+                    if (data.length) {
+                        for (var x = 0; x < data.length; x++) {
                             // Build out message div
                             var message = document.createElement('div');
                             message.setAttribute('class', 'chat-message');
-                            message.innerHTML = data[x].name+": "+data[x].message.replace(/\n/g, '<br>')+"<div align=right><font size=2>"+new Date(data[x].dt).toLocaleString('en-IN')+"</font></div>";
+                            message.innerHTML = data[x].name + ": " + data[x].message.replace(/\n/g, '<br>') +
+                                "<div align=right><font size=2>" + new Date(data[x].dt).toLocaleString('en-IN') +
+                                "</font></div>";
                             messages.appendChild(message);
                             messages.insertBefore(message, messages.firstChild);
                         }
                         var idx = data.length - 1;
                         console.log(data[idx].message);
-                        if(data[idx].name != username.value && username.value != '') {
+                        if (data[idx].name != username.value && username.value != '') {
                             var audio = new Audio('jingle-all-the-way.wav');
                             audio.play();
                             /*if(notifs) {
@@ -124,23 +168,23 @@
                 });
 
                 // Get Status From Server
-                socket.on('status', function(data){
+                socket.on('status', function (data) {
                     // get message status
-                    setStatus((typeof data === 'object')? data.message : data);
+                    setStatus((typeof data === 'object') ? data.message : data);
 
                     // If status is clear, clear text
-                    if(data.clear){
+                    if (data.clear) {
                         textarea.value = '';
                     }
                 });
 
                 // Handle Input
-                textarea.addEventListener('keydown', function(event){
-                    if(event.which === 13 && event.shiftKey == false){
+                textarea.addEventListener('keydown', function (event) {
+                    if (event.which === 13 && event.shiftKey == false) {
                         // Emit to server input
                         socket.emit('input', {
-                            name:username.value,
-                            message:textarea.value
+                            name: username.value,
+                            message: textarea.value
                         });
 
                         event.preventDefault();
@@ -148,39 +192,49 @@
                 })
 
                 // Handle Chat Clear
-                clearBtn.addEventListener('click', function(){
-                    if(confirm('Are you sure you want to clear the messages?')) {
+                clearBtn.addEventListener('click', function () {
+                    if (confirm('Are you sure you want to clear the messages?')) {
                         socket.emit('clear');
                     }
-				});
-				
-				pushBtn.addEventListener('click', () => {
-					enablePush();
-				});
-
-                // Clear Message
-                socket.on('cleared', function(){
-                    messages.textContent = '';
                 });
             }
 
-        })();
+            logout.addEventListener('click', () => {
+                fetch('/logout', {
+                    method: 'GET',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin'
+                })
+                .then((response) => {
+                    console.log(response);
+                    if(!response.ok) {
+                        console.log(response.statusText);
+                    }
+                    window.location.pathname = '/login';
+                    return response;
+                })
+                .catch(err => console.error(err));
+            });
 
-		async function enablePush() {
-			if(navigator.serviceWorker) {
-                if('PushManager' in window) {
-                    send().catch(err => console.error(err));
-                } else {
-                    console.log('Push not available');
-                }
-			}
-		}
+            // Clear Message
+            socket.on('cleared', function () {
+                messages.textContent = '';
+            });
+        }
+
+        if (navigator.serviceWorker) {
+            if ('PushManager' in window) {
+                send().catch(err => console.error(err));
+            } else {
+                console.log('Push not available');
+            }
+        }
+
         async function send() {
             // Register Service Worker
             console.log("Registering service worker...");
-            const register = await navigator.serviceWorker.register("/sw.js", {
-                scope: "/"
-            });
+            const register = await navigator.serviceWorker.register("/sw.js");
             console.log("Service Worker Registered...");
 
             // Register Push
@@ -195,27 +249,32 @@
             console.log("Sending Push...");
             await fetch("/push", {
                 method: "POST",
-                body: JSON.stringify({subscription: subscription, uname: username.value}),
+                body: JSON.stringify({
+                    subscription: subscription,
+                    uname: username.value
+                }),
                 headers: {
-                "content-type": "application/json"
+                    "content-type": "application/json"
                 }
             });
             console.log("Push Sent...");
         }
+
         function urlBase64ToUint8Array(base64String) {
-			const padding = "=".repeat((4 - base64String.length % 4) % 4);
-			const base64 = (base64String + padding)
-				.replace(/\-/g, "+")
-				.replace(/_/g, "/");
+            const padding = "=".repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding)
+                .replace(/\-/g, "+")
+                .replace(/_/g, "/");
 
-			const rawData = window.atob(base64);
-			const outputArray = new Uint8Array(rawData.length);
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
 
-			for (let i = 0; i < rawData.length; ++i) {
-				outputArray[i] = rawData.charCodeAt(i);
-			}
-			return outputArray;
-		}
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
     </script>
 </body>
+
 </html>
