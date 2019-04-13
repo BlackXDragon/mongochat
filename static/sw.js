@@ -57,9 +57,18 @@ self.addEventListener('notificationclick', e => {
             }
         });
     }
+    if(e.action == 'read') {
+        e.notification.close();
+    }
 });
 
 self.addEventListener('install', event => {
+    event.waitUntil(
+        caches.open('static-v1')
+        .then(cache => cache.addAll([
+            '/index.html'
+        ]))
+    );
     self.skipWaiting();
 });
 
