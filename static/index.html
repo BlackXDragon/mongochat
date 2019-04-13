@@ -9,14 +9,21 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>Page Not Found</title>
     <style>
         #messages {
             height: 300px;
             font-family: 'Pacifico', cursive;
         }
-        .cursive-font{
+        .cursive-font {
             font-family: 'Pacifico', cursive;
+        }
+        .msg {
+            width: 80%;
+        }
+        .del {
+            width: 20%;
         }
     </style>
 </head>
@@ -38,8 +45,8 @@
                     </div>
                     <br>
                     <div class="row">
-                        <textarea id="textarea" class="form-control col-md-9 col-sm-9" placeholder="Enter message..."></textarea>
-                        <button id="clear" class="btn btn-danger col-md-3 col-sm-3">Clear</button>
+                        <textarea id="textarea" class="form-control col-md-10 col-sm-10 col-xs-2 msg" placeholder="Enter message..."></textarea>
+                        <button id="clear" class="btn btn-danger col-md-2 col-sm-2 col-xs-10 del"><i class="material-icons">delete_forever</button>
                     </div>
                 </div>
                 <div id='sound'></div>
