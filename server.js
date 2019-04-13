@@ -8,6 +8,15 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const config = require('./config');
 
+app.all('*', (req, res, next) => {
+    if (req.secure) {
+        return next();
+    }
+    else {
+        res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
+    }
+});
+
 app.use(express.static('./static'));
 app.use(bodyParser.json());
 app.use(cookieParser(config.cookieSecret));
@@ -70,7 +79,7 @@ app.post('/login', (req, res) => {
         }
         if(users.password == req.body.password) {
             res.statusCode = 200;
-            res.cookie('user', req.body.uname, {signed: true, maxAge: 864000});
+            res.cookie('user', req.body.uname, {signed: true, maxAge: 2592000000});
             res.json({success: true});
         }
     });
