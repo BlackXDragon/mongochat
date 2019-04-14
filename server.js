@@ -58,11 +58,11 @@ app.use('/push', (req, res) => {
         res.status(400).redirect('/');
     }
     var exists = false;
-    for(sub in subs) {
+    subs.forEach((sub) => {
         if(sub.keys == req.body.keys) {
             exists = true;
         }
-    }
+    });
     if(exists) {
         res.status(400).json({});
     } else {
