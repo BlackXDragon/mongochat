@@ -59,7 +59,7 @@ app.use('/push', (req, res) => {
     }
     var exists = false;
     for(var i = 0; i < subs.length; i++) {
-        if(subs[i].keys == req.body.keys) {
+        if(subs[i].subsciption.keys == req.body.keys) {
             exists = true;
         }
     }
