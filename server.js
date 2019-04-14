@@ -71,6 +71,7 @@ app.use('/push', (req, res) => {
         webpush.sendNotification(req.body, JSON.stringify({name: 'Meaw Meaw', message: 'Web Push registered!'}))
         .catch(err => console.error(err));
     }
+    console.log(subs);
 });
 
 app.post('/login', (req, res) => {
