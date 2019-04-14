@@ -54,6 +54,9 @@ app.get('/logout', (req, res) => {
 });
 
 app.use('/push', (req, res) => {
+    if(!req.body) {
+        res.status(400).redirect('/');
+    }
     var exists = false;
     for(sub in subs) {
         if(sub.keys == req.body.keys) {
@@ -63,9 +66,9 @@ app.use('/push', (req, res) => {
     if(exists) {
         res.status(400).json({});
     } else {
-        subs.push(req.body);
+        subs.push({uname: req.signedCookies.user, subscription: req.body});
         res.status(201).json({});
-        webpush.sendNotification(req.body.subscription, JSON.stringify({name: 'Meaw Meaw', message: 'Web Push registered!'}))
+        webpush.sendNotification(req.body, JSON.stringify({name: 'Meaw Meaw', message: 'Web Push registered!'}))
         .catch(err => console.error(err));
     }
 });
