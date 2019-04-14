@@ -45,18 +45,12 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-    webpush.sendNotification(req.body, JSON.stringify({msg: 'close'}))
-    .catch(err => console.error(err));
-    res.status(200).clearCookie('user').json({});
-});
-
-app.post('/unregPush', (req, res) => {
     for(var i = 0; i < subs.length; i++) {
-        if(subs[i].subscription.keys == req.body.keys) {
+        if(subs[i].uname == req.signedCookies.user) {
             subs.splice(subs.indexOf(sub), 1);
         }
     }
-    res.status(200).json({});
+    res.status(200).clearCookie('user').json({});
 });
 
 app.use('/push', (req, res) => {
@@ -89,7 +83,13 @@ app.post('/login', (req, res) => {
         }
         if(users.password == req.body.password) {
             res.statusCode = 200;
-            res.cookie('user', req.body.uname, {signed: true, maxAge: 2592000000});
+            var num = 0;
+            for(var i = 0; i < subs.length; i++) {
+                if(subs[i].uname == req.body.keys.p256dh) {
+                    num++;
+                }
+            }
+            res.cookie('user', req.body.uname+num, {signed: true, maxAge: 2592000000});
             res.json({success: true});
         }
     });
