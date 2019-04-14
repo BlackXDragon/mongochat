@@ -5,51 +5,37 @@ var notifs = [];
 self.addEventListener('push', e => {
     console.log('Got Push Notification');
     const data = e.data.json();
-    if(e.data.msg = 'close') {
-        notifs = [];
-        self.registration.pushManager.getSubscription()
-        .then((subscription) => {
-            fetch("/unregPush", {
-                method: "POST",
-                body: JSON.stringify(subscription),
-                headers: {
-                    "content-type": "application/json"
-                }
-            })
+    notifs.push(data);
+    if(notifs.length<=1) {
+        self.registration.showNotification(data.name, {
+            body: data.message,
+            icon: '/msg.png',
+            sound: '/jingle-all-the-way.wav',
+            actions: [{
+                action: 'read',
+                title: 'Mark as Read'
+            }],
+            data: {
+                url: '/'
+            }
         });
     } else {
-        notifs.push(data);
-        if(notifs.length<=1) {
-            self.registration.showNotification(data.name, {
-                body: data.message,
-                icon: '/msg.png',
-                sound: '/jingle-all-the-way.wav',
-                actions: [{
-                    action: 'read',
-                    title: 'Mark as Read'
-                }],
-                data: {
-                    url: '/'
-                }
-            });
-        } else {
-            body = '';
-            notifs.forEach((notif) => {
-                body += notif.name+': '+notif.message+'\n';
-            });
-            self.registration.showNotification('New messages', {
-                body: body,
-                icon: '/msg.png',
-                sound: '/jingle-all-the-way.wav',
-                actions: [{
-                    action: 'read',
-                    title: 'Mark as Read'
-                }],
-                data: {
-                    url: '/'
-                }
-            });
-        }
+        body = '';
+        notifs.forEach((notif) => {
+            body += notif.name+': '+notif.message+'\n';
+        });
+        self.registration.showNotification('New messages', {
+            body: body,
+            icon: '/msg.png',
+            sound: '/jingle-all-the-way.wav',
+            actions: [{
+                action: 'read',
+                title: 'Mark as Read'
+            }],
+            data: {
+                url: '/'
+            }
+        });
     }
 });
 
