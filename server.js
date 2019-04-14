@@ -45,12 +45,18 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-    for(sub in subs) {
-        if(sub.uname == req.signedCookies.user) {
+    webpush.sendNotification(req.body, JSON.stringify({msg: 'close'}))
+    .catch(err => console.error(err));
+    res.status(200).clearCookie('user').json({});
+});
+
+app.post('/unregPush', (req, res) => {
+    for(var i = 0; i < subs.length; i++) {
+        if(subs[i].subscription.keys == req.body.keys) {
             subs.splice(subs.indexOf(sub), 1);
         }
     }
-    res.status(200).clearCookie('user').json({});
+    res.status(200).json({});
 });
 
 app.use('/push', (req, res) => {
@@ -59,7 +65,7 @@ app.use('/push', (req, res) => {
     }
     var exists = false;
     for(var i = 0; i < subs.length; i++) {
-        if(subs[i].subscription.endpoint == req.body.endpoint) {
+        if(subs[i].subscription.keys == req.body.keys) {
             exists = true;
         }
     }
