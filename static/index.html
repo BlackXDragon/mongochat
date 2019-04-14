@@ -238,9 +238,6 @@
             });
 
             if (navigator.serviceWorker) {
-                console.log("Registering service worker...");
-                const register = await navigator.serviceWorker.register("/sw.js");
-                console.log("Service Worker Registered...");
                 if ('PushManager' in window) {
                     send().catch(err => console.error(err));
                 } else {
@@ -250,6 +247,11 @@
         }
 
         async function send() {
+            // Register Service Worker
+            console.log("Registering service worker...");
+            const register = await navigator.serviceWorker.register("/sw.js");
+            console.log("Service Worker Registered...");
+
             // Register Push
             console.log("Registering Push...");
             const subscription = await register.pushManager.subscribe({
