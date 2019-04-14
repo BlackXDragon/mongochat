@@ -85,6 +85,7 @@ app.post('/login', (req, res) => {
             res.statusCode = 200;
             var num = 0;
             for(var i = 0; i < subs.length; i++) {
+                console.log(subs[i].uname.substring(0, req.body.uname.length));
                 if(subs[i].uname.substring(0, req.body.uname.length) == req.body.uname) {
                     num++;
                 }
