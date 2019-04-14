@@ -85,7 +85,7 @@ app.post('/login', (req, res) => {
             res.statusCode = 200;
             var num = 0;
             for(var i = 0; i < subs.length; i++) {
-                if(subs[i].uname == req.body.keys.p256dh) {
+                if(subs[i].uname == req.body.uname) {
                     num++;
                 }
             }
