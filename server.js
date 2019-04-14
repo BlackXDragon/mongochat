@@ -47,7 +47,7 @@ app.get('/login', (req, res) => {
 app.get('/logout', (req, res) => {
     for(var i = 0; i < subs.length; i++) {
         if(subs[i].uname == req.signedCookies.user) {
-            subs.splice(subs.indexOf(sub), 1);
+            subs.splice(i, 1);
         }
     }
     res.status(200).clearCookie('user').json({});
