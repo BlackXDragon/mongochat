@@ -90,7 +90,7 @@ app.post('/login', (req, res) => {
                     num++;
                 }
             }
-            res.cookie('user', req.body.uname+num, {signed: true, maxAge: 2592000000});
+            res.cookie('user', req.body.uname+'$'+num, {signed: true, maxAge: 2592000000});
             res.json({success: true});
         }
     });
@@ -100,7 +100,7 @@ app.get('/un', (req, res) => {
     if(!req.signedCookies.user) {
         return res.status(403).json({success: false, msg: 'Please login first'});
     }
-    res.status(200).json({success: true, user: req.signedCookies.user});
+    res.status(200).json({success: true, user: req.signedCookies.user.split('$')[0]});
 });
 
 var options = {
