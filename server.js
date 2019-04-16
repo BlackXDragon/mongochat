@@ -162,7 +162,7 @@ mongo.connect('mongodb://127.0.0.1/mongochat', function(err, db){
 
 					subs.forEach((sub) => {
 						console.log(sub);
-						if(sub.uname != data.name) {
+						if(sub.uname.split('$')[0] != data.name) {
 							webpush.sendNotification(sub.subscription, pushPayload)
 							.catch((err) => console.error(err));
 						}
